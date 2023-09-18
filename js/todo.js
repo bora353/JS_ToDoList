@@ -2,10 +2,13 @@ const toDoForm = document.getElementById("todo-form");
 const toDoList = document.getElementById("todo-list");
 const toDoInput = document.querySelector("#todo-form input");
 
+const TODOS_KEY = "todos";
+
 const toDos = [];
 
 function saveToDos(event) {
-  localStorage.setItem("todos", JSON.stringify(toDos));
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
+  //localStorage.setItem("todos", toDos);
 }
 
 // 삭제 버튼 함수 ⭐⭐⭐⭐⭐
@@ -45,3 +48,16 @@ function handleToDoSubmit(event) {
 }
 
 toDoForm.addEventListener("submit", handleToDoSubmit);
+
+function sayhello(item) {
+  console.log("하잇!", item);
+}
+
+const savedToDos = localStorage.getItem(TODOS_KEY);
+
+if (savedToDos !== null) {
+  const parsedToDos = JSON.parse(savedToDos);
+  console.log(parsedToDos);
+  parsedToDos.forEach((item) => console.log("바로", item));
+} else {
+}
