@@ -4,26 +4,25 @@ const toDoInput = document.querySelector("#todo-form input");
 
 const TODOS_KEY = "todos";
 
-const toDos = [];
-
-function saveToDos(event) {
-  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
-  //localStorage.setItem("todos", toDos);
-}
+let toDos = []; // let으로 해서 update 가능하게
 
 // 삭제 버튼 함수 ⭐⭐⭐⭐⭐
 function deleteToDo(event) {
-  console.log(event.target.parentNode.innerText);
+  //console.log(event.target.parentNode.innerText);
   const li = event.target.parentElement;
   li.remove();
+
+  toDos = toDos.filter((toDo) => toDo.id !== parseInt(li.id));
+  saveToDos();
 }
 
 // To Do List에 추가 함수
 function paintToDo(newTodo) {
   const li = document.createElement("li");
+  li.id = newTodo.id;
 
   const span = document.createElement("span");
-  span.innerText = newTodo;
+  span.innerText = newTodo.text;
 
   const button = document.createElement("button");
   button.innerText = "❌";
@@ -42,15 +41,21 @@ function handleToDoSubmit(event) {
   const newTodo = toDoInput.value;
   toDoInput.value = "";
 
-  toDos.push(newTodo);
-  paintToDo(newTodo);
+  const newTodoObj = {
+    text: newTodo,
+    id: Date.now(),
+  };
+
+  toDos.push(newTodoObj); // 배열에 Object 넣기
+  paintToDo(newTodoObj);
   saveToDos();
 }
 
-toDoForm.addEventListener("submit", handleToDoSubmit);
+toDoForm.addEventListener("submit", handleToDoSubmit); // form에서 엔터키 누르면 submit 이벤트 자동 발생
 
-function sayhello(item) {
-  console.log("하잇!", item);
+// localStorage에 저장
+function saveToDos(event) {
+  localStorage.setItem(TODOS_KEY, JSON.stringify(toDos));
 }
 
 const savedToDos = localStorage.getItem(TODOS_KEY);
@@ -58,6 +63,6 @@ const savedToDos = localStorage.getItem(TODOS_KEY);
 if (savedToDos !== null) {
   const parsedToDos = JSON.parse(savedToDos);
   console.log(parsedToDos);
-  parsedToDos.forEach((item) => console.log("바로", item));
-} else {
+  toDos = parsedToDos;
+  parsedToDos.forEach(paintToDo); // 매개변수로 parsedToDos가 들어가며 콜백 함수 호출
 }
